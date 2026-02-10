@@ -65,26 +65,50 @@
             });
 // adding search error handling
             const searchError = document.getElementById("searchError");
+            let errorTimeout = null;
+            let minDisplayTime = null;
 
-            function showSearchError(message) {
+            function showSearchError(message, minDuration = 5000) {
                 if (!searchError) {
                     return;
                 }
+                // Clear any existing timeout
+                if (errorTimeout) {
+                    clearTimeout(errorTimeout);
+                    errorTimeout = null;
+                }
+                
                 searchError.textContent = message;
                 searchError.style.display = "block";
+                
+                // Set minimum display time
+                minDisplayTime = Date.now() + minDuration;
             }
 
             function hideSearchError() {
                 if (!searchError) {
                     return;
                 }
-                searchError.style.display = "none";
+                
+                // Check if minimum display time has passed
+                const now = Date.now();
+                if (minDisplayTime && now < minDisplayTime) {
+                    // Wait until minimum display time is reached
+                    const delay = minDisplayTime - now;
+                    errorTimeout = setTimeout(() => {
+                        searchError.style.display = "none";
+                        minDisplayTime = null;
+                    }, delay);
+                } else {
+                    searchError.style.display = "none";
+                    minDisplayTime = null;
+                }
             }
 
             searchWidget.on("search-start", (event) => {
                 const term = (event && event.searchTerm) ? event.searchTerm.trim() : "";
                 if (!term) {
-                    showSearchError("Please enter a valid address.");// ensures user entered a valid address
+                    showSearchError("Please enter a valid address.");// alerts user to enter a valid address
                 } else {
                     hideSearchError();
                 }
