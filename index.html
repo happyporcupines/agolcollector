@@ -66,7 +66,6 @@
             });
             const locateBtn = new Locate({
                 view: view,
-                position: "bottom-right"
             });
             // Create featurelayer from feature service
             const layer = new FeatureLayer({
@@ -87,7 +86,7 @@
 
             //puts search widget under the other top right widget
             view.ui.add(searchWidget, {
-                position: "top-right"
+                position: "bottom-left"
             });
             // adding search error handling
             const searchError = document.getElementById("searchError");
